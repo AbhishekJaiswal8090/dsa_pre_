@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <algorithm>
 using namespace std;
 
 // Linked list implementation
@@ -8,7 +10,7 @@ using namespace std;
 
 //  and now we are going to implement methods and functions of linked list
 // push_fornt
-// push-back
+// push_back
 // pop front
 // push back
 
@@ -23,6 +25,15 @@ public:
         this->data = data;
         next = nullptr;
     }
+    // ~Node()
+    // {
+    //     if (next != NULL)
+    //     {
+    //         cout << "Destructuor of Node" << data << endl;
+    //         delete next;
+    //         next = NULL;
+    //     }
+    // }
 };
 
 class List
@@ -36,6 +47,15 @@ public:
         Head = NULL;
         Tail = NULL;
     }
+    // ~List()
+    // {
+    //     if (Head != NULL)
+    //     {
+    //         cout << "List" << endl;
+    //         delete Head;
+    //         Head = NULL;
+    //     }
+    // }
     void push_front(int val)
     {
         Node *newNode = new Node(val);
@@ -110,8 +130,237 @@ public:
             Tail = newNode;
         }
     }
-};
+    void DeleteEntireList()
+    {
+        Node *tmp = Head;
+        while (tmp->next != NULL)
+        {
+            Node *current = tmp;
+            tmp = tmp->next;
+            cout << "deletd node" << current->data << endl;
+            delete current;
+        }
+        Head = nullptr;
+    }
 
+    void pop_front()
+    {
+        Node *tmp = Head;
+        Head = Head->next;
+
+        delete tmp;
+    }
+
+    void pop_back()
+    {
+        Node *tmp = Head;
+        while (tmp->next->next != NULL)
+        {
+            tmp = tmp->next;
+        }
+
+        Node *delete_node = Tail;
+        tmp->next = NULL;
+        Tail = tmp;
+        delete delete_node;
+    }
+
+    int Search_Iteratively(int Key)
+    {
+        Node *tmp = Head;
+        int idx = 0;
+
+        while (tmp->next != NULL)
+        {
+            if (tmp->data == Key)
+            {
+
+                return idx;
+            }
+            idx++;
+            tmp = tmp->next;
+        }
+        return -1;
+    }
+
+    int Helper(Node *Head, int key)
+    {
+        if (Head == NULL)
+        {
+            return -1;
+        }
+        if (Head->data == key)
+        {
+            return 0;
+        }
+        int idx = Helper(Head->next, key);
+        if (idx == -1)
+        {
+            return -1;
+        }
+        return idx + 1;
+    }
+
+    int Search_Reacursively(int key)
+    {
+        return Helper(Head, key);
+    }
+
+    // Lets reverse a linked list
+
+    Node *Reverse_ll()
+    {
+        if (Head == NULL)
+        {
+            return NULL;
+        }
+
+        Node *curr = Head;
+        Node *prev = NULL;
+
+        while (curr != NULL)
+        {
+            Node *next = curr->next;
+            curr->next = prev;
+
+            // update in variables
+            prev = curr;
+            curr = next;
+        }
+
+        Tail = Head;
+        Head = prev;
+        return Head;
+    }
+    void DeleteNthNodeFromEnd(int n)
+    {
+        if (Head == NULL)
+            return;
+
+        // Step 1: Find size
+        int size = 0;
+        Node *curr = Head;
+        while (curr != NULL)
+        {
+            size++;
+            curr = curr->next;
+        }
+
+        if (n > size || n <= 0)
+            return;
+
+        if (n == size)
+        {
+            Node *temp = Head;
+            Head = Head->next;
+            delete temp;
+            return;
+        }
+
+        Node *prev = Head;
+        for (int i = 1; i < size - n; i++)
+        {
+            prev = prev->next;
+        }
+
+        Node *target = prev->next;
+        prev->next = target->next;
+        delete target;
+    }
+    // writting a function that could tell whether a linked list is a palindrome or not
+    // Not very optimal but kind of basic thoughts
+    bool is_Palindrome()
+    {
+        if (Head == NULL)
+        {
+            return false;
+        }
+        Node *tmp = Head;
+        std::string str = "";
+
+        while (tmp != NULL)
+        {
+            str += to_string(tmp->data);
+            tmp = tmp->next;
+        }
+
+        for (int i = 0; i < str.size() / 2; i++)
+        {
+            if (str[i] != str[str.size() - i - 1])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Detecting a cycle in a linked list using floyd cycle detecting algorithm
+    // optimal approach while the naive approach is simply travrese the list and move by putting down each and every
+    // node in an hashset once if a node al;ready exist it simply means that list contain cycle
+
+    bool detect_cycle()
+    {
+        Node *slow = Head;
+        Node *fast = Head;
+
+        while (slow && fast && fast->next)
+        {
+            slow = slow->next;
+            fast = fast->next->next;
+
+            if (slow == fast)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // writting the code for the removal of the cycle in an linked list
+
+    void removal_of_cycle()
+    {
+        Node *slow = Head;
+        Node *fast = Head;
+
+        slow = slow->next;
+        fast = fast->next->next;
+
+        // lets first detect the cycle in an linked list before we remove
+        while (slow && fast)
+        {
+            if (slow == fast)
+            {
+                break;
+            }
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        if (slow == fast)
+        {
+            slow = Head; // this check is necessary as per the algom
+
+            if (slow == fast) // if it builds the complete cycle then do this
+            {
+                while (fast->next != slow)
+                {
+                    fast = fast->next;
+                }
+            }
+            else // else do this
+            {
+                while (slow->next != fast->next)
+                {
+                    slow = slow->next;
+                    fast = fast->next;
+                }
+            }
+
+            fast->next = nullptr;
+        }
+    }
+};
 
 int main()
 {
@@ -125,7 +374,40 @@ int main()
 
     // Now lets build a function to print our linked list
     ll.Print_LL();
-    ll.Insert(2, 40);
+    // ll.Insert(2, 40);
+    // cout << "Before Reversing" << endl;
+    ll.DeleteNthNodeFromEnd(5);
+    cout << "After Deleting last 5th node" << endl;
     ll.Print_LL();
-    return 0;
+    // ll.DeleteEntireList();
+
+    // ll.pop_front();
+    // cout << "after deleting first element" << endl;
+    // ll.Print_LL();
+    // ll.pop_back();
+    // cout << "after deleting last element" << endl;
+    // ll.Print_LL();
+    // int val = ll.Search_Iteratively(40);
+    // if (val)
+    // {
+    //     cout << val << endl;
+    // }
+    // else
+    // {
+    //     cout << "Not found" << endl;
+    // }
+    // return 0;
+
+    // int val2 = ll.Search_Reacursively(40);
+    // if (val)
+    // {
+    //     cout << val << endl;
+    // }
+    // else
+    // {
+    //     cout << "Not found" << endl;
+    // }
+    // ll.Reverse_ll();
+    // cout << "After Reversing" << endl;
+    // ll.Print_LL();
 }
