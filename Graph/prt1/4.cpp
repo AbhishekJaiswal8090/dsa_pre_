@@ -3,7 +3,7 @@
 #include <vector>
 #include <queue>
 
-// BFS algorithm for diconnected component of graph;
+// BFS and DFS algorithm for diconnected component of graph;
 
 using namespace std;
 
@@ -85,7 +85,7 @@ public:
         {
             if (!vis[v])
             {
-                dsfHelper(v, vis);
+                dfsHelper(v, vis);
             }
         }
     }
@@ -97,7 +97,7 @@ public:
         {
             if (!vis[i])
             {
-                DFSHelper(i, vis);
+                dfsHelper(i, vis);
             }
         }
         cout << endl;

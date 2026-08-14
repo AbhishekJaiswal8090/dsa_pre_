@@ -85,6 +85,11 @@ public:
         cout << endl;
     }
 
+    // HashPath problem is a problem in which we have to like search for a destination node from given sorce node
+    // so the question reduced to finding a key element in the graph from a particular node
+    // so the best way to solve it is to think in terms of recursion , because recursively we can
+    // find the element more easily so from recursion we can think of DFS Algorithm
+
     bool HashPathHelper(int src, int des, vector<bool> &vis)
     {
 
