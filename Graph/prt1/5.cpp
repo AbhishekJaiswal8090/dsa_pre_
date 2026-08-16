@@ -92,6 +92,7 @@ public:
                 }
             }
         }
+        recPath[src] = false;
     }
 
     bool directedCycleDetection()
