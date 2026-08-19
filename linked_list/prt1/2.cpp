@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <list>
+
 #include <algorithm>
 using namespace std;
 
@@ -38,10 +40,10 @@ public:
 
 class List
 {
+public:
     Node *Head;
     Node *Tail;
 
-public:
     List()
     {
         Head = NULL;
@@ -361,6 +363,71 @@ public:
         }
     }
 };
+Node *split_List(Node *Head)
+{
+    Node *slow = Head;
+    Node *fast = Head;
+    Node *prev = NULL;
+
+    while (fast != NULL && fast->next != NULL)
+    {
+        prev = slow;
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    if (prev != NULL)
+    {
+        prev->next = NULL; // cut the list
+    }
+    return slow; // start of right half
+}
+
+Node *merge(Node *left, Node *right)
+{
+    List ans; // your class List with push_back and Head
+
+    while (left != NULL && right != NULL) // FIXED condition
+    {
+        if (left->data <= right->data)
+        {
+            ans.push_back(left->data);
+            left = left->next;
+        }
+        else
+        {
+            ans.push_back(right->data);
+            right = right->next;
+        }
+    }
+
+    while (left != NULL) // FIXED condition
+    {
+        ans.push_back(left->data);
+        left = left->next;
+    }
+    while (right != NULL) // FIXED condition
+    {
+        ans.push_back(right->data);
+        right = right->next;
+    }
+
+    return ans.Head; // return head of merged list
+}
+
+Node *merge_sort(Node *Head)
+{
+    if (Head == NULL || Head->next == NULL)
+    {
+        return Head; // base case
+    }
+
+    Node *rightHead = split_List(Head);
+    Node *left = merge_sort(Head);
+    Node *right = merge_sort(rightHead);
+
+    return merge(left, right);
+}
 
 int main()
 {
@@ -370,15 +437,15 @@ int main()
     ll.push_front(1);
 
     ll.push_back(4);
-    ll.push_back(10);
+    ll.push_back(1);
 
     // Now lets build a function to print our linked list
     ll.Print_LL();
     // ll.Insert(2, 40);
     // cout << "Before Reversing" << endl;
-    ll.DeleteNthNodeFromEnd(5);
-    cout << "After Deleting last 5th node" << endl;
-    ll.Print_LL();
+    // ll.DeleteNthNodeFromEnd(5);
+    // cout << "After Deleting last 5th node" << endl;
+    // ll.Print_LL();
     // ll.DeleteEntireList();
 
     // ll.pop_front();
@@ -410,4 +477,7 @@ int main()
     // ll.Reverse_ll();
     // cout << "After Reversing" << endl;
     // ll.Print_LL();
+    ll.Head = merge_sort(ll.Head);
+    cout << "After sorting the linked list " << endl;
+    ll.Print_LL();
 }
