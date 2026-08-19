@@ -58,7 +58,7 @@ public:
         while (st.size())
         {
             int val = st.top();
-            cout << val << " ";
+            cout << val << " ";-
             st.pop();
         }
     }
