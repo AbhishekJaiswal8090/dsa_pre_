@@ -10,6 +10,7 @@ using namespace std;
 // while MST is the minimum edge wieght take during building an spanning tree thats it
 // the prims algorithm is an Greedy algorithm which works greedily by chossing one optimal answer at at time and at last it builds globally optimal
 
+
 class Graph
 {
     int V;
