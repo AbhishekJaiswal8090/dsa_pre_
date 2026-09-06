@@ -10,24 +10,15 @@ using namespace std;
 // Recursive solution
 int Knapsack(vector<int> &v, vector<int> &weight, int W, int n)
 {
-    // whenevr our knapsack gets full or n becomes less than zero we will simply return
     if (n <= 0 || W <= 0)
         return 0;
 
-    // include curent item
     int val = v[n - 1];
     int wt = weight[n - 1];
 
-    // if wt is less than or eqal to capacity of knapsack
     if (wt <= W)
     {
-
-        // we have two choices
-
-        // include the current item
         int ans1 = Knapsack(v, weight, W - wt, n - 1) + v[n - 1];
-
-        // exclude current item
         int ans2 = Knapsack(v, weight, W, n - 1);
         return max(ans1, ans2);
     }
@@ -38,7 +29,6 @@ int Knapsack(vector<int> &v, vector<int> &weight, int W, int n)
 }
 
 // Memoized solution
-
 int KnapsackMemo(vector<vector<int>> &dp, vector<int> &profit, vector<int> &weight, int W, int n)
 {
     if (n <= 0 || W <= 0)
@@ -46,6 +36,7 @@ int KnapsackMemo(vector<vector<int>> &dp, vector<int> &profit, vector<int> &weig
 
     if (dp[n][W] != -1)
         return dp[n][W];
+
     int wt = weight[n - 1];
     int prof = profit[n - 1];
 
@@ -64,24 +55,78 @@ int KnapsackMemo(vector<vector<int>> &dp, vector<int> &profit, vector<int> &weig
 }
 
 // tabulation
+int KnapsackTab(int n, int W, vector<int> &profit, vector<int> &weight)
+{
+    vector<vector<int>> dp(n + 1, vector<int>(W + 1, 0));
+
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= W; j++)
+        {
+            int itemWeight = weight[i - 1];
+            int itemProfit = profit[i - 1];
+
+            if (itemWeight <= j)
+            {
+                dp[i][j] = max(dp[i - 1][j],
+                               dp[i - 1][j - itemWeight] + itemProfit);
+            }
+            else
+            {
+                dp[i][j] = dp[i - 1][j];
+            }
+        }
+    }
+
+    vector<bool> selected(n, false);
+    int i = n;
+    int j = W;
+
+    while (i > 0 && j > 0)
+    {
+        if (dp[i][j] != dp[i - 1][j])
+        {
+            selected[i - 1] = true;
+            j -= weight[i - 1];
+        }
+        i--;
+    }
+
+    cout << "Included items: ";
+    bool anyIncluded = false;
+    for (int k = 0; k < n; k++)
+    {
+        if (selected[k])
+        {
+            cout << k + 1 << " ";
+            anyIncluded = true;
+        }
+    }
+    if (!anyIncluded) cout << "None";
+    cout << endl;
+
+    cout << "Not included items: ";
+    bool anyNotIncluded = false;
+    for (int k = 0; k < n; k++)
+    {
+        if (!selected[k])
+        {
+            cout << k + 1 << " ";
+            anyNotIncluded = true;
+        }
+    }
+    if (!anyNotIncluded) cout << "None";
+    cout << endl;
+
+    return dp[n][W];
+}
 
 int main()
 {
+    vector<int> val = {60, 100, 120};
+    vector<int> weight = {10, 20, 30};
+    int W = 50;
 
-    vector<int> val = {1, 2, 3};
-    vector<int> weight = {4, 5, 1};
-    int W = 4;
-
-    vector<vector<int>> dp(val.size() + 1, vector<int>(W + 1, -1));
-    cout << "Recursive solution " << Knapsack(val, weight, W, val.size()) << endl;
-    cout << "Memoized " << KnapsackMemo(dp, val, weight, W, val.size()) << endl;
-
-    for (int i = 0; i <= val.size(); i++)
-    {
-        for (int j = 0; j <= W; j++)
-        {
-            cout << dp[i][j] << " ";
-        }
-        cout << endl;
-    }
+    cout << "Tabulation " << KnapsackTab(val.size(), W, val, weight) << endl;
+    return 0;
 }
